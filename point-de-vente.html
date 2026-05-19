@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#e67e22">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mon PDV">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Mon Point de Vente</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMmQyZDJkIi8+PHRleHQgeD0iNTAiIHk9IjQ1IiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2U2N2UyMiI+UERWPC90ZXh0Pjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1zaXplPSIxMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2YzOWMxMiI+UFJPPC90ZXh0Pjwvc3ZnPg==">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding-bottom: 80px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 18px;
+      background: linear-gradient(135deg, #2d2d2d, #3a3a3a);
+      border-radius: 15px;
+      border: 1px solid #444;
+    }
+
+    .header h1 {
+      color: #f39c12;
+      font-size: 20px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .header p {
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ONGLETS DE NAVIGATION */
+    .tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 15px;
+      background: #1e1e1e;
+      padding: 5px;
+      border-radius: 10px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px 5px;
+      background: transparent;
+      color: #888;
+      border: none;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+
+    .tab.actif {
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.actif {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SECTIONS */
+    .section {
+      background: #2d2d2d;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #3a3a3a;
+    }
+
+    .section-titre {
+      color: #f39c12;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e67e22;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    /* BOUTONS RÉSEAU */
+    .grille-reseaux {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-reseau {
+      padding: 12px 8px;
+      border: 2px solid #444;
+      border-radius: 10px;
+      background: #1e1e1e;
+      color: #888;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .btn-reseau .emoji {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .btn-reseau.actif.orange {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      border-color: #e67e22;
+      color: white;
+    }
+
+    .btn-reseau.actif.mtn {
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      border-color: #f39c12;
+      color: #1a1a1a;
+    }
+
+    .btn-reseau.actif.moov {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      border-color: #2980b9;
+      color: white;
+    }
+
+    /* BOUTONS TYPE */
+    .grille-types {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-type {
+      padding: 12px 6px;
+      border: 2px solid #444;
+      border-radius: 10px;
+      background: #1e1e1e;
+      color: #888;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .btn-type .emoji {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .btn-type.actif {
+      background: linear-gradient(135deg, #9b59b6, #8e44ad);
+      border-color: #8e44ad;
+      color: white;
+    }
+
+    /* INPUTS */
+    input[type="number"], input[type="tel"], input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      background: #1e1e1e;
+      border: 2px solid #444;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #e67e22;
+    }
+
+    /* BOUTON ENREGISTRER */
+    .btn-principal {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #27ae60, #229954);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+
+    .btn-principal:disabled {
+      background: #444;
+      color: #666;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-principal:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    /* STATS DASHBOARD */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #1e1e1e, #252525);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      text-align: center;
+    }
+
+    .stat-card.full { grid-column: 1 / -1; }
+
+    .stat-label {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .stat-valeur {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2ecc71;
+    }
+
+    .stat-card.mois .stat-valeur { color: #3498db; }
+    .stat-card.transactions .stat-valeur { color: #f39c12; font-size: 20px; }
+
+    /* RÉPARTITIONS */
+    .repartition-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      background: #1e1e1e;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      border-left: 4px solid;
+    }
+
+    .repartition-item.orange { border-color: #e67e22; }
+    .repartition-item.mtn { border-color: #f1c40f; }
+    .repartition-item.moov { border-color: #3498db; }
+    .repartition-item.credit { border-color: #9b59b6; }
+    .repartition-item.appel { border-color: #1abc9c; }
+    .repartition-item.internet { border-color: #e74c3c; }
+
+    .rep-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .rep-emoji { font-size: 18px; }
+
+    .rep-nom {
+      font-size: 13px;
+      color: #ccc;
+      font-weight: 500;
+    }
+
+    .rep-count {
+      font-size: 11px;
+      color: #888;
+      margin-left: 6px;
+    }
+
+    .rep-total {
+      font-size: 14px;
+      font-weight: bold;
+      color: #f1c40f;
+    }
+
+    /* TOP CLIENTS */
+    .client-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #1e1e1e;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      gap: 10px;
+    }
+
+    .client-rang {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .client-rang.or { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #1a1a1a; }
+    .client-rang.argent { background: linear-gradient(135deg, #bdc3c7, #95a5a6); color: #1a1a1a; }
+    .client-rang.bronze { background: linear-gradient(135deg, #d35400, #a04000); }
+
+    .client-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .client-numero {
+      font-size: 13px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .client-detail {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .client-montant {
+      font-size: 13px;
+      font-weight: bold;
+      color: #2ecc71;
+      flex-shrink: 0;
+    }
+
+    /* HISTORIQUE */
+    .transaction-item {
+      background: #1e1e1e;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      border-left: 3px solid #e67e22;
+      font-size: 12px;
+    }
+
+    .trans-haut {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .trans-pastilles {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .pastille-mini {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .pastille-mini.orange { background: #e67e22; color: white; }
+    .pastille-mini.mtn { background: #f1c40f; color: #1a1a1a; }
+    .pastille-mini.moov { background: #3498db; color: white; }
+    .pastille-mini.credit { background: #9b59b6; color: white; }
+    .pastille-mini.appel { background: #1abc9c; color: white; }
+    .pastille-mini.internet { background: #e74c3c; color: white; }
+
+    .trans-montant {
+      font-size: 14px;
+      font-weight: bold;
+      color: #2ecc71;
+    }
+
+    .trans-bas {
+      display: flex;
+      justify-content: space-between;
+      color: #888;
+      font-size: 11px;
+    }
+
+    .trans-numero {
+      font-weight: bold;
+      color: #aaa;
+    }
+
+    .btn-suppr {
+      background: transparent;
+      border: none;
+      color: #e74c3c;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    /* GRAPHIQUE */
+    .chart-container {
+      position: relative;
+      height: 220px;
+      background: #1e1e1e;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+
+    /* RECHERCHE */
+    .barre-recherche {
+      width: 100%;
+      padding: 10px 12px;
+      background: #1e1e1e;
+      border: 1px solid #444;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    /* VIDE */
+    .vide {
+      text-align: center;
+      padding: 30px 10px;
+      color: #666;
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #27ae60;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      z-index: 9999;
+      max-width: 90%;
+      text-align: center;
+      animation: slideUp 0.3s;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translate(-50%, 20px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    /* SCROLLBAR */
+    .liste-scroll {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .liste-scroll::-webkit-scrollbar { width: 4px; }
+    .liste-scroll::-webkit-scrollbar-track { background: #1e1e1e; }
+    .liste-scroll::-webkit-scrollbar-thumb { background: #e67e22; border-radius: 2px; }
+
+    /* BOUTONS ACTIONS BAS */
+    .btn-action {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .btn-export { background: #2980b9; color: white; }
+    .btn-effacer { background: #444; color: #ccc; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>💼 Mon Point de Vente</h1>
+      <p>Gestion Mobile Money</p>
+    </div>
+
+    <!-- ONGLETS -->
+    <div class="tabs">
+      <button class="tab actif" onclick="changerOnglet('saisie')">➕ Saisie</button>
+      <button class="tab" onclick="changerOnglet('dashboard')">📊 Analyses</button>
+      <button class="tab" onclick="changerOnglet('historique')">📋 Historique</button>
+    </div>
+
+    <!-- ============ ONGLET SAISIE ============ -->
+    <div class="tab-content actif" id="onglet-saisie">
+
+      <div class="section">
+        <div class="section-titre">📡 Réseau</div>
+        <div class="grille-reseaux">
+          <button class="btn-reseau" data-reseau="Orange" onclick="selectReseau(this)">
+            <span class="emoji">🟠</span>Orange
+          </button>
+          <button class="btn-reseau" data-reseau="MTN" onclick="selectReseau(this)">
+            <span class="emoji">🟡</span>MTN
+          </button>
+          <button class="btn-reseau" data-reseau="Moov" onclick="selectReseau(this)">
+            <span class="emoji">🔵</span>Moov
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-titre">🛒 Type de Transaction</div>
+        <div class="grille-types">
+          <button class="btn-type" data-type="Crédit" onclick="selectType(this)">
+            <span class="emoji">💳</span>Crédit
+          </button>
+          <button class="btn-type" data-type="Appel" onclick="selectType(this)">
+            <span class="emoji">📞</span>Appel
+          </button>
+          <button class="btn-type" data-type="Internet" onclick="selectType(this)">
+            <span class="emoji">📶</span>Internet
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-titre">💰 Détails</div>
+
+        <label>📞 Numéro du Client :</label>
+        <input type="tel" inputmode="tel" id="numeroClient" placeholder="Ex: 07 12 34 56 78" maxlength="20">
+
+        <label>💵 Montant (F) :</label>
+        <input type="number" inputmode="numeric" id="montant" placeholder="Ex: 500, 1000, 2500">
+
+        <button class="btn-principal" id="btnEnregistrer" onclick="enregistrer()">
+          ✅ Enregistrer la Transaction
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ============ ONGLET DASHBOARD ============ -->
+    <div class="tab-content" id="onglet-dashboard">
+
+      <!-- STATS GLOBALES -->
+      <div class="section">
+        <div class="section-titre">📊 Vue d'ensemble</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Aujourd'hui</div>
+            <div class="stat-valeur" id="totalJour">0 F</div>
+          </div>
+          <div class="stat-card mois">
+            <div class="stat-label">Total ce Mois</div>
+            <div class="stat-valeur" id="totalMois">0 F</div>
+          </div>
+          <div class="stat-card transactions full">
+            <div class="stat-label">Total Transactions</div>
+            <div class="stat-valeur" id="totalTrans">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AFFLUENCE PAR HEURE -->
+      <div class="section">
+        <div class="section-titre">⏰ Affluence par Heure (Aujourd'hui)</div>
+        <div class="chart-container">
+          <canvas id="graphHeure"></canvas>
+        </div>
+      </div>
+
+      <!-- TOTAL PAR RÉSEAU -->
+      <div class="section">
+        <div class="section-titre">📡 Total par Réseau</div>
+        <div id="repartitionReseaux">
+          <div class="vide">Aucune donnée</div>
+        </div>
+      </div>
+
+      <!-- TOTAL PAR TYPE -->
+      <div class="section">
+        <div class="section-titre">🛒 Total par Type</div>
+        <div id="repartitionTypes">
+          <div class="vide">Aucune donnée</div>
+        </div>
+      </div>
+
+      <!-- TOP 10 CLIENTS -->
+      <div class="section">
+        <div class="section-titre">🏆 Top 10 Clients Fréquents</div>
+        <div id="topClients">
+          <div class="vide">Aucun client enregistré</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ ONGLET HISTORIQUE ============ -->
+    <div class="tab-content" id="onglet-historique">
+
+      <div class="section">
+        <div class="section-titre">📋 Historique des Transactions</div>
+
+        <input type="text" class="barre-recherche" id="recherche" placeholder="🔍 Rechercher par numéro ou montant..." oninput="filtrerHistorique()">
+
+        <div class="liste-scroll" id="listeTransactions">
+          <div class="vide">Aucune transaction</div>
+        </div>
+
+        <button class="btn-action btn-export" onclick="exporterCSV()">📥 Exporter en CSV</button>
+        <button class="btn-action btn-effacer" onclick="toutEffacer()">🗑️ Tout Effacer</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const CLE = 'pdv_transactions_v1';
+    let transactions = [];
+    let reseauSelect = null;
+    let typeSelect = null;
+    let chartHeure = null;
+
+    // ===== UTILITAIRES =====
+    function formaterNombre(n) {
+      return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    function afficherToast(msg, couleur) {
+      const t = document.createElement('div');
+      t.className = 'toast';
+      if (couleur) t.style.background = couleur;
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2000);
+    }
+
+    function nettoyerNumero(num) {
+      return (num || '').replace(/\s/g, '').replace(/-/g, '');
+    }
+
+    function formaterNumero(num) {
+      const clean = nettoyerNumero(num);
+      if (!clean) return '';
+      // Format XX XX XX XX XX
+      return clean.replace(/(\d{2})(?=\d)/g, '$1 ');
+    }
+
+    // ===== ONGLETS =====
+    function changerOnglet(nom) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('actif'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('actif'));
+      event.target.classList.add('actif');
+      document.getElementById('onglet-' + nom).classList.add('actif');
+
+      if (nom === 'dashboard') rafraichirDashboard();
+      if (nom === 'historique') afficherHistorique();
+    }
+
+    // ===== SÉLECTIONS =====
+    function selectReseau(btn) {
+      document.querySelectorAll('.btn-reseau').forEach(b => {
+        b.classList.remove('actif', 'orange', 'mtn', 'moov');
+      });
+      const r = btn.dataset.reseau.toLowerCase();
+      btn.classList.add('actif', r);
+      reseauSelect = btn.dataset.reseau;
+    }
+
+    function selectType(btn) {
+      document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('actif'));
+      btn.classList.add('actif');
+      typeSelect = btn.dataset.type;
+    }
+
+    // ===== ENREGISTRER =====
+    function enregistrer() {
+      const numero = nettoyerNumero(document.getElementById('numeroClient').value);
+      const montant = parseFloat(document.getElementById('montant').value);
+
+      if (!reseauSelect) {
+        afficherToast('⚠️ Choisis un réseau', '#e74c3c');
+        return;
+      }
+      if (!typeSelect) {
+        afficherToast('⚠️ Choisis un type', '#e74c3c');
+        return;
+      }
+      if (!numero || numero.length < 8) {
+        afficherToast('⚠️ Numéro client invalide', '#e74c3c');
+        return;
+      }
+      if (!montant || montant <= 0) {
+        afficherToast('⚠️ Montant invalide', '#e74c3c');
+        return;
+      }
+
+      const trans = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        reseau: reseauSelect,
+        type: typeSelect,
+        numero: numero,
+        montant: montant
+      };
+
+      transactions.unshift(trans);
+      sauvegarder();
+
+      // Reset rapide
+      document.getElementById('numeroClient').value = '';
+      document.getElementById('montant').value = '';
+      // On garde réseau et type pour transactions rapides successives
+
+      afficherToast('✅ ' + formaterNombre(montant) + ' F enregistré !');
+    }
+
+    // ===== STORAGE =====
+    function sauvegarder() {
+      try { localStorage.setItem(CLE, JSON.stringify(transactions)); } catch(e) {}
+    }
+
+    function charger() {
+      try {
+        const s = localStorage.getItem(CLE);
+        if (s) transactions = JSON.parse(s);
+      } catch(e) { transactions = []; }
+    }
+
+    // ===== DASHBOARD =====
+    function rafraichirDashboard() {
+      calculerStats();
+      dessinerGraphHeure();
+      afficherRepartitionReseaux();
+      afficherRepartitionTypes();
+      afficherTopClients();
+    }
+
+    function calculerStats() {
+      const auj = new Date().toISOString().slice(0, 10);
+      const mois = new Date().toISOString().slice(0, 7);
+
+      let totalJour = 0, totalMois = 0;
+      transactions.forEach(t => {
+        const dateTrans = t.date.slice(0, 10);
+        const moisTrans = t.date.slice(0, 7);
+        if (dateTrans === auj) totalJour += t.montant;
+        if (moisTrans === mois) totalMois += t.montant;
+      });
+
+      document.getElementById('totalJour').textContent = formaterNombre(totalJour) + ' F';
+      document.getElementById('totalMois').textContent = formaterNombre(totalMois) + ' F';
+      document.getElementById('totalTrans').textContent = transactions.length;
+    }
+
+    function dessinerGraphHeure() {
+      const auj = new Date().toISOString().slice(0, 10);
+      const heures = new Array(24).fill(0);
+
+      transactions.forEach(t => {
+        if (t.date.slice(0, 10) === auj) {
+          const h = new Date(t.date).getHours();
+          heures[h]++;
+        }
+      });
+
+      const labels = heures.map((_, i) => i + 'h');
+      const ctx = document.getElementById('graphHeure').getContext('2d');
+
+      if (chartHeure) chartHeure.destroy();
+
+      chartHeure = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Transactions',
+            data: heures,
+            backgroundColor: 'rgba(230, 126, 34, 0.8)',
+            borderColor: '#e67e22',
+            borderWidth: 1,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1e1e1e',
+              titleColor: '#f39c12',
+              bodyColor: '#fff',
+              callbacks: {
+                label: c => c.parsed.y + ' transactions'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#888', font: { size: 10 }, stepSize: 1 },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            x: {
+              ticks: { color: '#888', font: { size: 9 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    function afficherRepartitionReseaux() {
+      const stats = { Orange: { count: 0, total: 0 }, MTN: { count: 0, total: 0 }, Moov: { count: 0, total: 0 } };
+      transactions.forEach(t => {
+        if (stats[t.reseau]) {
+          stats[t.reseau].count++;
+          stats[t.reseau].total += t.montant;
+        }
+      });
+
+      const emojis = { Orange: '🟠', MTN: '🟡', Moov: '🔵' };
+      let html = '';
+      let hasData = false;
+
+      Object.keys(stats).forEach(r => {
+        if (stats[r].count > 0) {
+          hasData = true;
+          html += `
+            <div class="repartition-item ${r.toLowerCase()}">
+              <div class="rep-info">
+                <span class="rep-emoji">${emojis[r]}</span>
+                <div>
+                  <div class="rep-nom">${r}</div>
+                  <div class="rep-count">${stats[r].count} transaction${stats[r].count > 1 ? 's' : ''}</div>
+                </div>
+              </div>
+              <div class="rep-total">${formaterNombre(stats[r].total)} F</div>
+            </div>
+          `;
+        }
+      });
+
+      document.getElementById('repartitionReseaux').innerHTML = hasData ? html : '<div class="vide">Aucune donnée</div>';
+    }
+
+    function afficherRepartitionTypes() {
+      const stats = { 'Crédit': { count: 0, total: 0 }, 'Appel': { count: 0, total: 0 }, 'Internet': { count: 0, total: 0 } };
+      transactions.forEach(t => {
+        if (stats[t.type]) {
+          stats[t.type].count++;
+          stats[t.type].total += t.montant;
+        }
+      });
+
+      const emojis = { 'Crédit': '💳', 'Appel': '📞', 'Internet': '📶' };
+      const classes = { 'Crédit': 'credit', 'Appel': 'appel', 'Internet': 'internet' };
+      let html = '';
+      let hasData = false;
+
+      Object.keys(stats).forEach(t => {
+        if (stats[t].count > 0) {
+          hasData = true;
+          html += `
+            <div class="repartition-item ${classes[t]}">
+              <div class="rep-info">
+                <span class="rep-emoji">${emojis[t]}</span>
+                <div>
+                  <div class="rep-nom">${t}</div>
+                  <div class="rep-count">${stats[t].count} transaction${stats[t].count > 1 ? 's' : ''}</div>
+                </div>
+              </div>
+              <div class="rep-total">${formaterNombre(stats[t].total)} F</div>
+            </div>
+          `;
+        }
+      });
+
+      document.getElementById('repartitionTypes').innerHTML = hasData ? html : '<div class="vide">Aucune donnée</div>';
+    }
+
+    function afficherTopClients() {
+      const clients = {};
+      transactions.forEach(t => {
+        if (!clients[t.numero]) {
+          clients[t.numero] = { count: 0, total: 0, reseaux: new Set() };
+        }
+        clients[t.numero].count++;
+        clients[t.numero].total += t.montant;
+        clients[t.numero].reseaux.add(t.reseau);
+      });
+
+      const tri = Object.entries(clients)
+        .sort((a, b) => b[1].count - a[1].count)
+        .slice(0, 10);
+
+      if (tri.length === 0) {
+        document.getElementById('topClients').innerHTML = '<div class="vide">Aucun client enregistré</div>';
+        return;
+      }
+
+      let html = '';
+      tri.forEach((c, idx) => {
+        const rang = idx + 1;
+        const classeRang = rang === 1 ? 'or' : rang === 2 ? 'argent' : rang === 3 ? 'bronze' : '';
+        const medaille = rang === 1 ? '🥇' : rang === 2 ? '🥈' : rang === 3 ? '🥉' : '#' + rang;
+        html += `
+          <div class="client-item">
+            <div class="client-rang ${classeRang}">${medaille}</div>
+            <div class="client-info">
+              <div class="client-numero">${formaterNumero(c[0])}</div>
+              <div class="client-detail">${c[1].count} transactions • ${[...c[1].reseaux].join(', ')}</div>
+            </div>
+            <div class="client-montant">${formaterNombre(c[1].total)} F</div>
+          </div>
+        `;
+      });
+      document.getElementById('topClients').innerHTML = html;
+    }
+
+    // ===== HISTORIQUE =====
+    function afficherHistorique() {
+      filtrerHistorique();
+    }
+
+    function filtrerHistorique() {
+      const filtre = (document.getElementById('recherche').value || '').toLowerCase();
+      const liste = transactions.filter(t => {
+        if (!filtre) return true;
+        return t.numero.includes(filtre) || t.montant.toString().includes(filtre);
+      });
+
+      const zone = document.getElementById('listeTransactions');
+
+      if (liste.length === 0) {
+        zone.innerHTML = '<div class="vide">' + (filtre ? 'Aucun résultat' : 'Aucune transaction') + '</div>';
+        return;
+      }
+
+      zone.innerHTML = liste.map(t => {
+        const d = new Date(t.date);
+        const date = d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+        const heure = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+        return `
+          <div class="transaction-item">
+            <div class="trans-haut">
+              <div class="trans-pastilles">
+                <span class="pastille-mini ${t.reseau.toLowerCase()}">${t.reseau}</span>
+                <span class="pastille-mini ${t.type.toLowerCase().replace('é','e')}">${t.type}</span>
+              </div>
+              <span class="trans-montant">+${formaterNombre(t.montant)} F</span>
+            </div>
+            <div class="trans-bas">
+              <span class="trans-numero">📞 ${formaterNumero(t.numero)}</span>
+              <span>${date} • ${heure}</span>
+              <button class="btn-suppr" onclick="supprimerTransaction(${t.id})">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function supprimerTransaction(id) {
+      if (!confirm('Supprimer cette transaction ?')) return;
+      transactions = transactions.filter(t => t.id !== id);
+      sauvegarder();
+      afficherHistorique();
+      afficherToast('🗑️ Transaction supprimée');
+    }
+
+    function toutEffacer() {
+      if (transactions.length === 0) {
+        afficherToast('Aucune transaction à effacer');
+        return;
+      }
+      if (!confirm('⚠️ ATTENTION : Effacer TOUTES les transactions ?\nCette action est irréversible !')) return;
+      transactions = [];
+      sauvegarder();
+      afficherHistorique();
+      afficherToast('🔄 Tout a été effacé');
+    }
+
+    // ===== EXPORT CSV =====
+    function exporterCSV() {
+      if (transactions.length === 0) {
+        afficherToast('⚠️ Aucune transaction à exporter', '#e74c3c');
+        return;
+      }
+
+      let csv = 'Date,Heure,Reseau,Type,Numero,Montant\n';
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        const date = d.toLocaleDateString('fr-FR');
+        const heure = d.toLocaleTimeString('fr-FR');
+        csv += `${date},${heure},${t.reseau},${t.type},${t.numero},${t.montant}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `transactions_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      afficherToast('✅ CSV téléchargé');
+    }
+
+    // ===== INIT =====
+    window.addEventListener('load', () => {
+      charger();
+    });
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE = 'pdv-v1';
+        self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.add('./'))); self.skipWaiting(); });
+        self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./')))); });
+      `;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
+  </script>
+
+</body>
+</html>
